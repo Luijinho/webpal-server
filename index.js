@@ -69,6 +69,10 @@ app.get('/downloadLogs', function(req, res) {
     });
 });
 
+app.get('/', function(req, res) {
+  res.send('Hello World!');
+});
+
 app.post('/log', (req, res) => {
   const logData = req.body;
   const userId = logData.userId;
@@ -108,6 +112,6 @@ app.post('/log', (req, res) => {
 });
 
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`Server is running on port ${port}`);
 });
