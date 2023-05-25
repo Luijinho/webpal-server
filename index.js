@@ -6,7 +6,7 @@ const path = require('path');
 const archiver = require('archiver');
 
 const app = express();
-const port = 8085;
+const port = process.env.PORT || 8085;
 
 app.use(express.json());
 app.use(cors());
@@ -46,26 +46,21 @@ app.post('/evaluateExerciseWithoutStatic', async (req, res) => {
 });
 
 app.get('/downloadLogs', function(req, res) {
-    // create a file to stream archive data to.
     let output = fs.createWriteStream('logsWebpal.zip');
     let archive = archiver('zip', {
-        zlib: { level: 9 } // Sets the compression level.
+        zlib: { level: 9 } 
     });
 
-    // pipe archive data to the file
     archive.pipe(output);
 
-    // append files from a directory
     archive.directory('logsWebpal/', false);
 
-    // finalize the archive (ie we are done appending files but streams have to finish yet)
     archive.finalize();
 
     output.on('close', function() {
         console.log(archive.pointer() + ' total bytes');
         console.log('archiver has been finalized and the output file descriptor has closed.');
 
-        //send the .zip
         res.download(__dirname + '/logsWebpal.zip');
     });
 
@@ -79,25 +74,19 @@ app.post('/log', (req, res) => {
   const userId = logData.userId;
   const logContent = logData.logContent;
 
-  // Define the folder path and log file name
   const logsFolder = 'logsWebpal';
   const logFileName = `${userId}.tsv`;
   const logFilePath = path.join(__dirname, logsFolder, logFileName);
 
-  // Check if the logs folder exists, create it if not
   if (!fs.existsSync(logsFolder)) {
     fs.mkdirSync(logsFolder);
   }
 
-  // Convert logContent to TSV format
   const logEntry = Object.values(logContent).join('\t');
 
-  // Create the header
   const header = 'studentID\texerciseID\ttimestamp\twithFeedback\tfeedback';
 
-  // Check if the log file already exists
   if (fs.existsSync(logFilePath)) {
-    // Append the log entry to the existing log file
     fs.appendFile(logFilePath, logEntry + '\n', (err) => {
       if (err) {
         console.error(err);
@@ -107,7 +96,6 @@ app.post('/log', (req, res) => {
       }
     });
   } else {
-    // Create a new file with the header and log entry
     fs.writeFile(logFilePath, header + '\n' + logEntry + '\n', (err) => {
       if (err) {
         console.error(err);
