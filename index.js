@@ -6,7 +6,7 @@ const path = require('path');
 const archiver = require('archiver');
 
 const app = express();
-const port = process.env.PORT || 8085;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());
