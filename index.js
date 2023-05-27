@@ -66,6 +66,10 @@ app.post('/getFullExercise', async (req, res) => {
   res.status(200).send({ ...exercise, description: matchingExercise.description });
 });
 
+app.post('/', async (req, res) => {
+  res.send("Hello World");
+});
+
 
 app.get('/getAllExercises', async (req, res) => {
   const exercises = await webpal.getAllExercises();
