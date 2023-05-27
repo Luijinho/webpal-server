@@ -26,6 +26,8 @@ async function loadExercisesFromFile() {
         fs.writeFileSync(exercisesFilePath, JSON.stringify(exercisesData, null, 2), 'utf8');
       }
     }
+  }else {
+    fs.writeFileSync(exercisesFilePath, '[]', 'utf8');
   }
 }
 
