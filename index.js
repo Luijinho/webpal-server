@@ -11,16 +11,48 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 
+const exercisesDir = path.join(__dirname, 'exercises');
+if (!fs.existsSync(exercisesDir)) {
+    fs.mkdirSync(exercisesDir);
+}
+const exercisesPath = path.join(exercisesDir, 'exercises.json');
+
 app.post('/createExercise', (req, res) => {
     const solutionData = req.body;
     const id = webpal.createExercise(solutionData.code, solutionData.tests, solutionData.assignment);
+
+    const exercises = getStoredExercises();
+    exercises[id] = solutionData;
+    storeExercises(exercises);
+
     res.send(id);
 });
 
+function getStoredExercises() {
+  if (!fs.existsSync(exercisesPath)) {
+      return {};
+  }
+
+  const data = fs.readFileSync(exercisesPath);
+  return JSON.parse(data);
+}
+
+function storeExercises(exercises) {
+  const data = JSON.stringify(exercises);
+  fs.writeFileSync(exercisesPath, data);
+}
+
 app.post('/deleteExercise', (req, res) => {
-    const id = req.body.id;
-    webpal.deleteExercise(id);
-    res.status(200).send("Deleted");
+  const id = req.body.id;
+  webpal.deleteExercise(id);
+
+  const exercises = getStoredExercises();
+  if (id in exercises) {
+      delete exercises[id];
+      storeExercises(exercises);
+  }
+
+  res.status(200).send("Deleted");
 });
 
 app.post('/getFullExercise', (req, res) => {
@@ -48,7 +80,7 @@ app.post('/evaluateExerciseWithoutStatic', async (req, res) => {
 app.get('/downloadLogs', function(req, res) {
     let output = fs.createWriteStream('logsWebpal.zip');
     let archive = archiver('zip', {
-        zlib: { level: 9 } 
+        zlib: { level: 9 }
     });
 
     archive.pipe(output);
@@ -67,10 +99,6 @@ app.get('/downloadLogs', function(req, res) {
     archive.on('error', function(err){
         throw err;
     });
-});
-
-app.get('/', function(req, res) {
-  res.send('Hello World!');
 });
 
 app.post('/log', (req, res) => {
@@ -111,7 +139,20 @@ app.post('/log', (req, res) => {
   }
 });
 
+app.get('/', function(req, res) {
+  res.send('Hello World!');
+});
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server is running on port ${port}`);
+
+  const exercises = getStoredExercises();
+  const packageExercises = webpal.getAllExercises();
+
+  for (const id in exercises) {
+    if (!(id in packageExercises)) {
+        const solutionData = exercises[id];
+        webpal.createExercise(solutionData.code, solutionData.tests, solutionData.assignment);
+    }
+  }
 });
