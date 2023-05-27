@@ -149,10 +149,16 @@ app.listen(port, '0.0.0.0', () => {
   const exercises = getStoredExercises();
   const packageExercises = webpal.getAllExercises();
 
+  const packageExerciseIds = new Set(packageExercises.map(exercise => exercise.exerciseID));
+
   for (const id in exercises) {
-    if (!(id in packageExercises)) {
-        const solutionData = exercises[id];
-        webpal.createExercise(solutionData.code, solutionData.tests, solutionData.assignment);
+    if (!packageExerciseIds.has(id)) {
+        try {
+            const solutionData = exercises[id];
+            webpal.createExercise(solutionData.code, solutionData.tests, solutionData.assignment);
+        } catch (error) {
+            console.error(`Failed to create exercise with id ${id}: ${error}`);
+        }
     }
   }
 });
