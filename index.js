@@ -7,14 +7,7 @@ const archiver = require('archiver');
 
 const app = express();
 
-const corsOptions ={
-  origin:'*', 
-  credentials:true,
-  optionSuccessStatus:200,
-}
-
-app.use(cors(corsOptions));
-app.options('*', cors());
+app.use(cors());
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
