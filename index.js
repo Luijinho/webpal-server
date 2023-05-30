@@ -6,16 +6,23 @@ const path = require('path');
 const archiver = require('archiver');
 
 const app = express();
-const port = process.env.PORT || 3000;
-
-app.use(express.json());
 app.use(cors());
-
+app.options('*', cors());
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   next();
 });
+
+app.use((req, res, next) => {
+  console.log(`${req.method} request for '${req.url}' - ${JSON.stringify(req.body)}`);
+  next();
+});
+
+const port = process.env.PORT || 3000;
+
+app.use(express.json());
 
 const exercisesFilePath = path.join(__dirname, 'exercises.json');
 
