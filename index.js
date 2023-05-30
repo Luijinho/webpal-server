@@ -6,7 +6,14 @@ const path = require('path');
 const archiver = require('archiver');
 
 const app = express();
-app.use(cors());
+
+const corsOptions ={
+  origin:'*', 
+  credentials:true,
+  optionSuccessStatus:200,
+}
+
+app.use(cors(corsOptions));
 app.options('*', cors());
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'https://luijinho.github.io');
