@@ -98,13 +98,13 @@ app.get('/getAllExercises', async (req, res) => {
 
 app.post('/evaluateExercise', async (req, res) => {
     const attemptData = req.body;
-    const feedback = await webpal.evaluateAttempt(attemptData.id, attemptData.attemptFiles, attemptData.port, attemptData.previousFeedback);
+    const feedback = await webpal.evaluateAttempt(attemptData.id, attemptData.attemptFiles, attemptData.previousFeedback);
     res.json(feedback);
 });
 
 app.post('/evaluateExerciseWithoutStatic', async (req, res) => {
     const attemptData = req.body;
-    const feedback = await webpal.evaluateAttemptWithoutStatic(attemptData.id, attemptData.attemptFiles, attemptData.port, attemptData.previousFeedback);
+    const feedback = await webpal.evaluateAttemptWithoutStatic(attemptData.id, attemptData.attemptFiles, attemptData.previousFeedback);
     res.json(feedback);
 });
 
