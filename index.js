@@ -8,7 +8,7 @@ const archiver = require('archiver');
 const app = express();
 
 const corsOptions ={
-  origin:'*', 
+  origin:'https://luijinho.github.io', 
   credentials:true,
   optionSuccessStatus:200,
 }
