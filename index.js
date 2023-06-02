@@ -154,7 +154,7 @@ app.post('/log', (req, res) => {
 
   const logEntry = Object.values(logContent).join('\t');
 
-  const header = 'studentID\texerciseID\ttimestamp\twithFeedback\tfeedback';
+  const header = 'studentID\texerciseID\texerciseName\ttimestamp\twithFeedback\ttype\tfeedback';
 
   if (fs.existsSync(logFilePath)) {
     fs.appendFile(logFilePath, logEntry + '\n', (err) => {
